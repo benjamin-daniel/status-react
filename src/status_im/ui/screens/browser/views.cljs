@@ -132,7 +132,9 @@
         ;; https://reactjs.org/docs/events.html#event-pooling
         :on-message                                 #(re-frame/dispatch [:browser/bridge-message-received (.. ^js % -nativeEvent -data)])
         :on-load                                    #(re-frame/dispatch [:browser/loading-started])
-        :on-error                                   #(re-frame/dispatch [:browser/error-occured])
+        :on-error                                   #(let [native-event (.. ^js % -nativeEvent)
+                                                           _ (log/info "### on-error" native-event)]
+                                                       (re-frame/dispatch [:browser/error-occured]))
         :injected-java-script-before-content-loaded (js-res/ethereum-provider (str network-id))
         :injected-java-script                       js-res/webview-js}])]
    [navigation url-original can-go-back? can-go-forward? dapps-account]
